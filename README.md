@@ -498,3 +498,31 @@ MIT License - 详见 [LICENSE](LICENSE) 文件
 如果这个项目对您有帮助，请给个 ⭐ Star 支持一下！
 
 **由 ❤️ 和 TypeScript 驱动**
+
+## 🔄 自动发布
+
+项目配置了GitHub Actions自动发布流程：
+
+### 发布新版本
+
+1. **创建并推送标签**:
+   ```bash
+   git tag v1.0.0
+   git push origin v1.0.0
+   ```
+
+2. **GitHub Actions会自动**:
+   - 构建跨平台可执行文件 (Windows, macOS, Linux)
+   - 打包示例文件和模板
+   - 创建GitHub Release
+   - 上传所有文件供用户下载
+
+### 下载发布版本
+
+用户可以从GitHub Releases页面下载：
+- **可执行文件**: 选择对应平台的文件
+  - `resume-generator-win.exe` (Windows)
+  - `resume-generator-macos` (macOS)  
+  - `resume-generator-linux` (Linux)
+- **示例文件包**: `sample-files-and-templates.zip`
+  - 包含示例YAML文件和Handlebars模板
