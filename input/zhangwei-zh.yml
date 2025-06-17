@@ -1,7 +1,7 @@
 # 张伟 个人简历
 
 模板配置:
-  模板路径: "template/resume-fresh.hbs" # 使用新的清新模板
+  模板路径: "template/resume.hbs" # 使用新的清新模板
   语言: "zh-CN" # 设置语言为中文
 
 个人信息:
