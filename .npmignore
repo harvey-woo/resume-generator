@@ -1,0 +1,42 @@
+# 源代码文件（只保留必要的运行时文件）
+*.ts
+!*.d.ts
+tsconfig.json
+
+# 可执行文件
+*.exe
+生成
+resume-generator
+build/
+
+# 脚本文件（仅保留必要的CLI脚本）
+scripts/test-exe.js
+
+# 开发依赖
+.gitignore
+.npmignore
+
+# 测试和文档
+test/
+tests/
+*.test.js
+*.spec.js
+
+# 编辑器配置
+.vscode/
+.idea/
+
+# 日志和缓存
+*.log
+npm-debug.log*
+
+# 临时文件
+tmp/
+temp/
+
+# 构建目录
+build/
+
+# 示例文件
+examples/
+demo/

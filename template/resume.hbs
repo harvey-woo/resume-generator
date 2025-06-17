@@ -1,0 +1,560 @@
+<html lang="{{#if language}}{{language}}{{else}}zh-CN{{/if}}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{个人信息.姓名}} - {{#if (eq language "en")}}Personal Resume{{else}}个人简历{{/if}}</title>    <style>
+      /* 全局重置 */
+      * { 
+        margin: 0; 
+        padding: 0; 
+        box-sizing: border-box; 
+      }
+      
+      /* 默认中文字体 */
+      body { 
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        line-height: 1.6; 
+        color: #333; 
+        background: #f8f9fa; 
+        font-size: 14px; 
+      }
+      
+      /* 英文环境下的字体 */
+      html[lang="en"] body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      }
+
+      /* 容器样式 */
+      .container { 
+        max-width: 900px; 
+        margin: 40px auto; 
+        background: white; 
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.1); 
+        border-radius: 8px;
+        overflow: hidden; 
+      }
+
+      /* 头部样式 */
+      .header { 
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+        color: white; 
+        padding: 40px; 
+        text-align: center;
+        position: relative; 
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+      }
+
+      /* 头像容器 */
+      .photo-container { 
+        width: 120px; 
+        height: 120px; 
+        border-radius: 50%; 
+        overflow: hidden; 
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        margin-bottom: 20px; 
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); 
+      }
+
+      .photo-container img { 
+        width: 100%; 
+        height: 100%; 
+        object-fit: cover; 
+      }
+
+      /* 头部文字样式 */
+      .header h1 { 
+        font-size: 2.5em; 
+        margin-bottom: 10px; 
+        font-weight: 300; 
+      }
+
+      .header h1 .name-info { 
+        font-size: 0.6em; 
+        font-weight: 400; 
+      }
+
+      .header .subtitle { 
+        font-size: 1.2em; 
+        opacity: 0.9; 
+        margin-bottom: 20px; 
+      }
+
+      /* 联系信息 */
+      .contact-info { 
+        display: flex; 
+        justify-content: center; 
+        gap: 30px;
+        flex-wrap: wrap; 
+        margin-top: 20px; 
+      }
+
+      .contact-item { 
+        display: flex;
+        align-items: center; 
+        gap: 8px; 
+        font-size: 0.95em; 
+      }
+
+      /* 内容区域 */
+      .content { 
+        padding: 40px; 
+      }
+
+      .section { 
+        margin-bottom: 40px; 
+      }
+
+      .section:last-child {
+        margin-bottom: 0; 
+      }
+
+      /* 章节标题 */
+      .section-title { 
+        font-size: 1.5em; 
+        color: #667eea;
+        margin-bottom: 20px; 
+        padding-bottom: 10px; 
+        border-bottom: 2px solid #e9ecef; 
+        position: relative; 
+      }
+
+      .section-title::before { 
+        content: '';
+        position: absolute; 
+        bottom: -2px; 
+        left: 0; 
+        width: 50px; 
+        height: 2px;
+        background: #667eea; 
+      }
+
+      /* 基本信息网格 */
+      .basic-info { 
+        display: grid; 
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+        gap: 15px; 
+        margin-bottom: 20px; 
+      }
+
+      .info-item { 
+        display: flex; 
+        align-items: center; 
+        gap: 10px; 
+        padding: 10px;
+        background: #f8f9fa; 
+        border-radius: 6px; 
+      }
+
+      .info-label { 
+        font-weight: 600;
+        color: #495057; 
+        min-width: 80px; 
+      }
+
+      /* 经历项目卡片 */
+      .experience-item, 
+      .project-item,
+      .education-item { 
+        margin-bottom: 25px; 
+        padding: 20px; 
+        background: #f8f9fa;
+        border-radius: 8px; 
+        border-left: 4px solid #667eea; 
+        page-break-inside: avoid; 
+      }
+
+      /* 经历项目头部 */
+      .experience-header,
+      .project-header, 
+      .education-header { 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: flex-start; 
+        margin-bottom: 10px; 
+        flex-wrap: wrap; 
+        gap: 10px; 
+      }
+
+      /* 标题样式 */
+      .position-title, 
+      .project-title, 
+      .education-title {
+        font-size: 1.2em; 
+        font-weight: 600; 
+        color: #495057; 
+      }
+
+      .company-name,
+      .education-school { 
+        color: #667eea; 
+        font-weight: 500; 
+      }
+
+      /* 时间和薪资标签 */
+      .time-period {
+        background: #667eea; 
+        color: white; 
+        padding: 4px 12px; 
+        border-radius: 20px;
+              font-size: 0.85em; 
+        white-space: nowrap; 
+        margin-left: 10px; 
+      }
+
+      .salary { 
+        background: #28a745;
+        color: white; 
+        padding: 4px 12px; 
+        border-radius: 20px; 
+        font-size: 0.85em; 
+      }
+
+      .time-salary-container { 
+        display: flex; 
+        align-items: center; 
+      }
+
+      .industry { 
+        color: #6c757d; 
+        font-style: italic; 
+        margin-bottom: 10px; 
+      }
+
+      .description { 
+        margin-top: 10px; 
+        line-height: 1.7; 
+      }
+
+      /* 技能内容样式 */
+      .skills-content {
+        line-height: 1.7;
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+      }
+
+      .skills-content strong {
+        color: #667eea;
+      }
+
+      .skills-content ul {
+        margin: 10px 0;
+        padding-left: 20px;
+      }
+
+      .skills-content li {
+        margin: 5px 0;
+      }
+
+      /* 项目链接 */
+      .project-link { 
+        margin-top: 5px; 
+      }
+
+      .project-link a:hover { 
+        text-decoration: underline !important; 
+      }
+
+      /* 响应式设计 - 移动端 */
+      @media (max-width: 768px) { 
+        .container { 
+          margin: 20px;
+          border-radius: 0; 
+        }
+
+        .header { 
+          padding: 30px 20px; 
+        }
+
+        .content { 
+          padding: 30px 20px; 
+        }
+
+        .contact-info { 
+          gap: 15px; 
+        }
+
+        .experience-header,
+        .project-header, 
+        .education-header { 
+          flex-direction: column; 
+          align-items: flex-start; 
+        }
+
+        .basic-info { 
+          grid-template-columns: 1fr; 
+        }
+
+        .time-salary-container { 
+          gap: 5px; 
+        }
+
+        .time-period { 
+          margin-left: 0; 
+        }
+      }      /* 打印样式 */
+      @media print {
+        * {
+          -webkit-print-color-adjust: exact !important;
+          color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
+
+        body { 
+          background: white; 
+        }        .container { 
+          box-shadow: none; 
+          margin: 0; 
+          padding: 0; /* 去掉容器的内边距 */
+        }        .content {
+          padding-left: 0 !important; /* 去掉左边距 */
+          padding-right: 0 !important; /* 去掉右边距 */
+        }
+
+        .section {
+          margin-bottom: 40px !important; /* 保持原有章节间距 */
+        }
+
+        .section:last-child {
+          margin-bottom: 0 !important;
+        }
+
+        .header { 
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important; 
+          -webkit-print-color-adjust: exact !important;
+          color-adjust: exact !important;
+          print-color-adjust: exact !important;
+          padding: 30px; /* 保持header的内边距 */
+        }
+        .experience-item, 
+        .project-item, 
+        .education-item { 
+          page-break-inside: avoid; 
+          break-inside: avoid;
+          background: #f8f9fa !important;
+          border-left: 4px solid #667eea !important;
+          -webkit-print-color-adjust: exact !important;
+          color-adjust: exact !important;
+          margin-bottom: 25px !important; /* 保持原有卡片间距 */
+          padding-left: 15px !important; /* 左边距减少到15px */
+          padding-right: 15px !important; /* 右边距减少到15px */
+        }
+
+        .basic-info {
+          margin-bottom: 20px !important; /* 保持原有基本信息区域间距 */
+        }        
+        .info-item {
+          padding-left: 8px !important; /* 左边距减少到8px */
+          padding-right: 8px !important; /* 右边距减少到8px */
+        }        
+        .skills-content {
+          background: #f8f9fa !important;
+          -webkit-print-color-adjust: exact !important;
+          color-adjust: exact !important;
+          padding-left: 15px !important; /* 左边距减少到15px */
+          padding-right: 15px !important; /* 右边距减少到15px */
+        }
+        .skills-content strong {
+          color: #667eea !important;
+        }
+        .section-title {
+          page-break-after: avoid;
+          break-after: avoid;
+          color: #667eea !important;
+          border-bottom: 2px solid #e9ecef !important;
+          margin-bottom: 20px !important; /* 保持原有标题间距 */
+        }
+
+        .section-title::before {
+          background: #667eea !important;
+        }
+
+        .time-period {
+          background: #667eea !important;
+          color: white !important;
+          -webkit-print-color-adjust: exact !important;
+          color-adjust: exact !important;
+        }
+
+        .salary {
+          background: #28a745 !important;
+          color: white !important;
+          -webkit-print-color-adjust: exact !important;
+          color-adjust: exact !important;
+        }
+
+        .company-name, 
+        .education-school {
+          color: #667eea !important;
+        }
+
+        .project-link a {
+          color: #667eea !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        {{#if 个人信息.照片}}
+          <div class="photo-container">
+            <img src="{{个人信息.照片}}" alt="{{#if (eq language "en")}}{{个人信息.姓名}}'s Photo{{else}}{{个人信息.姓名}}的照片{{/if}}" />
+          </div>
+        {{/if}}
+        <h1>{{个人信息.姓名}}{{#if 基本信息.性别}}<span class="name-info">
+              ·
+              {{基本信息.性别}}</span>{{/if}}{{#if 基本信息.年龄}}<span
+              class="name-info"
+            > · {{基本信息.年龄}}</span>{{/if}}</h1>
+        <div class="subtitle">{{{个人信息.专业概述}}}</div>
+        <div class="contact-info">
+          <div class="contact-item">
+            <span>📱</span>
+            <span>{{基本信息.电话}}</span>
+          </div>
+          <div class="contact-item">
+            <span>📧</span>
+            <span>{{基本信息.邮箱}}</span>
+          </div>
+          <div class="contact-item">
+            <span>🏢</span>
+            <span>{{基本信息.意向岗位}}</span>
+          </div>
+          <div class="contact-item">
+            <span>📍</span>
+            <span>{{基本信息.意向城市}}</span>
+          </div>
+          <div class="contact-item">
+            <span>💰</span>
+            <span>{{基本信息.期望月薪}}</span>
+          </div>
+        </div>
+      </header>
+      <main class="content">
+        {{#if 工作经历}}
+          <section class="section">
+            <h2 class="section-title">{{#if (eq language "en")}}Work Experience{{else}}工作经历{{/if}}</h2>
+            {{#each 工作经历}}
+              <div class="experience-item">
+                <div class="experience-header">
+                  <div>
+                    <div class="position-title">{{职位}}</div>
+                    <div class="company-name">{{公司}}</div>
+                    {{#if 行业}}
+                      <div class="industry">{{行业}}</div>
+                    {{/if}}
+                  </div>                  <div>
+                    <div class="time-salary-container">
+                      {{#if 薪资}}
+                        <div class="salary">{{薪资}}</div>
+                      {{/if}}
+                      <div class="time-period">{{时间}}</div>
+                    </div>
+                  </div>
+                </div>
+                {{#if 描述}}
+                  <div class="description">{{{描述}}}</div>
+                {{/if}}
+              </div>
+            {{/each}}
+          </section>
+        {{/if}}
+
+        {{#if 项目经历}}
+          <section class="section">
+            <h2 class="section-title">{{#if (eq language "en")}}Project Experience{{else}}项目经历{{/if}}</h2>
+            {{#each 项目经历}}
+              <div class="project-item">
+                <div class="project-header">
+                  <div>
+                    <div class="project-title">{{项目名称}}</div>
+                    {{#if 角色}}
+                      <div class="company-name">{{角色}}</div>
+                    {{/if}}
+                  </div>
+                  {{#if 时间}}
+                    <div class="time-period">{{时间}}</div>
+                  {{/if}}
+                </div>
+                {{#if 描述}}
+                  <div class="description">{{{描述}}}</div>
+                {{/if}}
+              </div>
+            {{/each}}
+          </section>
+        {{/if}}        {{#if 相关技能}}
+          <section class="section">
+            <h2 class="section-title">{{#if (eq language "en")}}Professional Skills{{else}}专业技能{{/if}}</h2>
+            <div class="skills-content">
+              {{{相关技能}}}
+            </div>
+          </section>
+        {{/if}}
+
+        {{#if Skills}}
+          <section class="section">
+            <h2 class="section-title">{{#if (eq language "en")}}Professional Skills{{else}}专业技能{{/if}}</h2>
+            <div class="skills-content">
+              {{{Skills}}}
+            </div>
+          </section>
+        {{/if}}
+
+        {{#if 开源社区}}
+          <section class="section">
+            <h2 class="section-title">{{#if (eq language "en")}}Open Source Community{{else}}开源社区{{/if}}</h2>
+            {{#each 开源社区}}
+              <div class="project-item">
+                <div class="project-header">
+                  <div>
+                    <div class="project-title">{{名称}}</div>
+                    {{#if 地址}}
+                      <div class="project-link">
+                        <a
+                          href="{{地址}}"
+                          target="_blank"
+                          style="color: #667eea; text-decoration: none;"
+                        >
+                          🔗
+                          {{地址}}
+                        </a>
+                      </div>
+                    {{/if}}
+                  </div>
+                </div>
+                {{#if 描述}}
+                  <div class="description">{{{描述}}}</div>
+                {{/if}}
+              </div>
+            {{/each}}
+          </section>
+        {{/if}}
+
+        {{#if 教育经历}}
+          <section class="section">
+            <h2 class="section-title">{{#if (eq language "en")}}Education{{else}}教育经历{{/if}}</h2>
+            {{#each 教育经历}}
+              <div class="education-item">
+                <div class="education-header">
+                  <div>
+                    <div class="education-title">{{学历}} - {{专业}}</div>
+                    <div class="education-school">{{学校}}</div>
+                  </div>
+                  {{#if 时间}}
+                    <div class="time-period">{{时间}}</div>
+                  {{/if}}
+                </div>
+                {{#if 描述}}
+                  <div class="description">{{{描述}}}</div>
+                {{/if}}
+              </div>
+            {{/each}}
+          </section>
+        {{/if}}
+      </main>
+    </div>
+  </body>
+</html>

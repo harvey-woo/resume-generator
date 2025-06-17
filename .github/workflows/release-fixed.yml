@@ -1,0 +1,64 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*' # 触发条件：推送以 'v' 开头的标签，如 v1.0.0
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build executables
+      run: npm run build:exe
+
+    - name: List build contents
+      run: |
+        echo "Build directory contents:"
+        ls -la build/
+
+    - name: Get tag information
+      id: tag
+      run: echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+    - name: Create Release and Upload Assets
+      uses: softprops/action-gh-release@v1
+      with:
+        name: Resume Generator v${{ steps.tag.outputs.version }}
+        body: |
+          ## Resume Generator v${{ steps.tag.outputs.version }}
+          
+          ### 📦 下载文件
+          - **Windows**: resume-generator-win.exe
+          - **macOS**: resume-generator-macos  
+          - **Linux**: resume-generator-linux
+          - **示例文件**: src/ 目录下的YAML文件
+          - **模板文件**: template/ 目录下的Handlebars模板
+          
+          ### 🚀 使用方法
+          1. 下载对应平台的可执行文件
+          2. 下载示例文件和模板文件
+          3. 参考示例编辑您的简历YAML
+          4. 运行可执行文件生成简历
+          
+          自动构建于 GitHub Actions
+        files: |
+          ./build/*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

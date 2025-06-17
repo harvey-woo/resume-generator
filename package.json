@@ -1,0 +1,60 @@
+{
+  "name": "resume-generator",
+  "version": "1.0.0",
+  "description": "Resume generator using Handlebars and YAML",
+  "main": "scripts/generator-cli.js",  "bin": {
+    "resume-gen": "./scripts/generator-cli.js"
+  },
+  "pkg": {
+    "scripts": [],
+    "assets": [
+      "template/**/*",
+      "src/**/*"
+    ],
+    "targets": [
+      "node18-win-x64",
+      "node18-macos-x64",
+      "node18-linux-x64"
+    ],
+    "outputPath": "./build"
+  },
+  "scripts": {
+    "build": "npm run build:html && npm run build:pdf",
+    "build:html": "tsx scripts/generator.ts",
+    "build:pdf": "tsx scripts/pdf-generator.ts",
+    "clean": "tsx scripts/clean-pdf.ts",
+    "clean:exe": "powershell -Command \"Remove-Item resume-generator* -ErrorAction SilentlyContinue\"",
+    "dev": "tsx scripts/generator.ts",
+    "type-check": "tsc --noEmit",
+    "package": "npm run build:exe",    
+    "build:exe": "npm run build:exe:all && npm run copy:assets",
+    "build:exe:all": "pkg . --targets node18-win-x64,node18-macos-x64,node18-linux-x64 --out-path ./build",
+    "copy:assets": "cpx \"src/**/*\" \"build/src\" && cpx \"template/**/*\" \"build/template\"",
+    "build:exe:win": "pkg . --targets node18-win-x64 --out-path ./build",
+    "build:exe:mac": "pkg . --targets node18-macos-x64 --out-path ./build",
+    "build:exe:linux": "pkg . --targets node18-linux-x64 --out-path ./build"
+  },
+  "dependencies": {
+    "handlebars": "^4.7.8",
+    "js-yaml": "^4.1.0",
+    "marked": "^9.1.6",
+    "puppeteer": "^24.10.0"
+  },
+  "keywords": [
+    "resume",
+    "handlebars",
+    "yaml"
+  ],
+  "author": "Harvey Woo",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/marked": "^6.0.0",
+    "@types/node": "^24.0.3",
+    "cpx": "^1.5.0",
+    "pkg": "^5.8.1",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+}

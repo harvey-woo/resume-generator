@@ -1,0 +1,768 @@
+<html lang="{{#if language}}{{language}}{{else}}zh-CN{{/if}}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{个人信息.姓名}} - {{#if (eq language "en")}}Personal Resume{{else}}个人简历{{/if}}</title>
+    <style>
+      /* 全局重置 */
+      * { 
+        margin: 0; 
+        padding: 0; 
+        box-sizing: border-box; 
+      }
+      
+      /* 现代极简字体设置 */
+      body { 
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+        line-height: 1.6; 
+        color: #1a202c; 
+        background: #f7fafc;
+        font-size: 15px; 
+        letter-spacing: -0.01em;
+      }
+      
+      /* 英文环境字体 */
+      html[lang="en"] body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      }
+
+      /* 左右分栏布局容器 */
+      .container { 
+        max-width: 1200px; 
+        margin: 0 auto; 
+        background: white; 
+        display: grid;
+        grid-template-columns: 350px 1fr;
+        min-height: 100vh;
+        box-shadow: 0 0 0 1px #e2e8f0;
+      }
+
+      /* 左侧边栏 */
+      .sidebar {
+        background: linear-gradient(180deg, #2d3748 0%, #1a202c 100%);
+        color: white;
+        padding: 40px 30px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* 侧边栏装饰 */
+      .sidebar::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+        animation: float 6s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-20px) rotate(5deg); }
+      }
+
+      /* 头像区域 */
+      .avatar-section {
+        text-align: center;
+        margin-bottom: 40px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .avatar-container { 
+        width: 120px; 
+        height: 120px; 
+        border-radius: 50%; 
+        overflow: hidden; 
+        margin: 0 auto 20px;
+        border: 4px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+      }
+
+      .avatar-container::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: conic-gradient(from 0deg, #667eea, #764ba2, #667eea);
+        border-radius: 50%;
+        z-index: -1;
+        animation: rotate 3s linear infinite;
+      }
+
+      @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+
+      .avatar-container img { 
+        width: 100%; 
+        height: 100%; 
+        object-fit: cover; 
+      }
+
+      /* 姓名标题 */
+      .name-title {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        background: linear-gradient(135deg, #fff 0%, #e2e8f0 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .name-info {
+        font-size: 14px;
+        opacity: 0.8;
+        margin-bottom: 15px;
+      }
+
+      .professional-title {
+        font-size: 16px;
+        color: #667eea;
+        font-weight: 500;
+        margin-bottom: 30px;
+      }
+
+      /* 联系信息 */
+      .contact-section {
+        margin-bottom: 40px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .section-header {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .section-header::before {
+        content: '';
+        width: 3px;
+        height: 20px;
+        background: linear-gradient(180deg, #667eea, #764ba2);
+        border-radius: 2px;
+      }
+
+      .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+        padding: 10px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .contact-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .contact-icon {
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        font-size: 12px;
+      }
+
+      .contact-text {
+        font-size: 14px;
+        opacity: 0.9;
+      }
+
+      /* 技能区域 */
+      .skills-sidebar {
+        position: relative;
+        z-index: 1;
+      }
+
+      .skill-category {
+        margin-bottom: 25px;
+      }
+
+      .skill-category h4 {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        color: #667eea;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .skill-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .skill-tag {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+      }
+
+      .skill-tag:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-1px);
+      }
+
+      /* 右侧主内容区 */
+      .main-content {
+        padding: 40px;
+        background: white;
+      }      /* 专业概述区域 */
+      .summary-section {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 40px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        z-index: 1;
+      }
+
+      .summary-text {
+        font-size: 14px;
+        line-height: 1.7;
+        opacity: 0.9;
+      }
+
+      .summary-text strong {
+        color: #667eea;
+      }
+
+      /* 主内容区的章节 */
+      .content-section {
+        margin-bottom: 50px;
+      }
+
+      .content-section:last-child {
+        margin-bottom: 0;
+      }
+
+      /* 主要章节标题 */
+      .main-section-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #1a202c;
+        margin-bottom: 30px;
+        position: relative;
+        padding-left: 20px;
+      }
+
+      .main-section-title::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(180deg, #667eea, #764ba2);
+        border-radius: 2px;
+      }
+
+      /* 时间线样式 */
+      .timeline {
+        position: relative;
+        padding-left: 30px;
+      }
+
+      .timeline::before {
+        content: '';
+        position: absolute;
+        left: 15px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(180deg, #667eea, #764ba2, #f093fb);
+      }
+
+      /* 时间线项目 */
+      .timeline-item {
+        position: relative;
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        border-left: 3px solid transparent;
+        background-clip: padding-box;
+      }
+
+      .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -30px;
+        top: 25px;
+        width: 12px;
+        height: 12px;
+        background: white;
+        border: 3px solid #667eea;
+        border-radius: 50%;
+        z-index: 1;
+      }
+
+      .timeline-item:hover {
+        transform: translateX(5px);
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+        border-left-color: #667eea;
+      }
+
+      /* 时间线内容头部 */
+      .timeline-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+
+      .timeline-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1a202c;
+        margin-bottom: 4px;
+      }
+
+      .timeline-subtitle {
+        font-size: 16px;
+        color: #667eea;
+        font-weight: 500;
+      }
+
+      .timeline-meta {
+        font-size: 14px;
+        color: #718096;
+        margin-top: 2px;
+      }
+
+      /* 时间和薪资标签 */
+      .timeline-badges {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .time-badge {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 25px;
+        font-size: 13px;
+        font-weight: 600;
+        white-space: nowrap;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+      }
+
+      .salary-badge {
+        background: linear-gradient(135deg, #48bb78, #38a169);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 25px;
+        font-size: 13px;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(72, 187, 120, 0.3);
+      }
+
+      /* 时间线描述 */
+      .timeline-description {
+        margin-top: 15px;
+        line-height: 1.7;
+        color: #4a5568;
+        font-size: 15px;
+      }
+
+      .timeline-description strong {
+        color: #667eea;
+        font-weight: 600;
+      }
+
+      /* 项目链接样式 */
+      .project-links {
+        margin-top: 15px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .project-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 500;
+        padding: 6px 12px;
+        border: 1px solid #667eea;
+        border-radius: 20px;
+        font-size: 13px;
+        transition: all 0.3s ease;
+      }
+
+      .project-link:hover {
+        background: #667eea;
+        color: white;
+        text-decoration: none;
+      }
+
+      /* 技能标签网格 */
+      .skills-grid {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+      }
+
+      .skills-content {
+        line-height: 1.8;
+        color: #4a5568;
+        font-size: 15px;
+      }
+
+      .skills-content strong {
+        color: #667eea;
+        font-weight: 600;
+      }
+
+      .skills-content ul {
+        margin: 15px 0;
+        padding-left: 20px;
+      }
+
+      .skills-content li {
+        margin: 8px 0;
+      }      /* 响应式设计 */
+      @media (max-width: 1024px) {
+        .container {
+          grid-template-columns: 300px 1fr;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          padding: 30px 20px;
+        }
+
+        .main-content {
+          padding: 30px 20px;
+        }
+
+        .timeline {
+          padding-left: 20px;
+        }
+
+        .timeline::before {
+          left: 10px;
+        }
+
+        .timeline-item::before {
+          left: -20px;
+        }
+
+        .timeline-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .timeline-badges {
+          margin-top: 10px;
+        }
+      }
+
+      /* 打印样式 */
+      @media print {
+        * {
+          -webkit-print-color-adjust: exact !important;
+          color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
+
+        body {
+          background: white;
+        }
+
+        .container {
+          grid-template-columns: 1fr;
+          box-shadow: none;
+          max-width: 100%;
+        }
+
+        .sidebar {
+          background: #2d3748 !important;
+          color: white !important;
+          padding: 20px;
+        }
+
+        .main-content {
+          padding: 20px;
+        }
+
+        .timeline::before {
+          background: linear-gradient(180deg, #667eea, #764ba2) !important;
+        }
+
+        .timeline-item {
+          page-break-inside: avoid;
+          break-inside: avoid;
+          box-shadow: none;
+          border: 1px solid #e2e8f0;
+        }
+
+        .time-badge {
+          background: linear-gradient(135deg, #667eea, #764ba2) !important;
+          color: white !important;
+        }
+
+        .salary-badge {
+          background: linear-gradient(135deg, #48bb78, #38a169) !important;
+          color: white !important;
+        }
+
+        .avatar-container::before {
+          background: conic-gradient(from 0deg, #667eea, #764ba2, #667eea) !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- 左侧边栏 -->
+      <aside class="sidebar">
+        <!-- 头像和基本信息 -->
+        <div class="avatar-section">
+          {{#if 个人信息.照片}}
+            <div class="avatar-container">
+              <img src="{{个人信息.照片}}" alt="{{#if (eq language "en")}}{{个人信息.姓名}}'s Photo{{else}}{{个人信息.姓名}}的照片{{/if}}" />
+            </div>
+          {{/if}}
+          <h1 class="name-title">{{个人信息.姓名}}</h1>
+          <div class="name-info">
+            {{#if 基本信息.性别}}{{基本信息.性别}}{{/if}}
+            {{#if 基本信息.年龄}} · {{基本信息.年龄}}{{/if}}
+          </div>
+          <div class="professional-title">{{基本信息.意向岗位}}</div>
+        </div>
+
+        <!-- 联系信息 -->
+        <div class="contact-section">
+          <h3 class="section-header">{{#if (eq language "en")}}Contact{{else}}联系方式{{/if}}</h3>
+          <div class="contact-item">
+            <div class="contact-icon">📱</div>
+            <div class="contact-text">{{基本信息.电话}}</div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">📧</div>
+            <div class="contact-text">{{基本信息.邮箱}}</div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">�</div>
+            <div class="contact-text">{{基本信息.意向城市}}</div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">💰</div>
+            <div class="contact-text">{{基本信息.期望月薪}}</div>
+          </div>
+        </div>
+
+        <!-- 专业概述 -->
+        {{#if 个人信息.专业概述}}
+          <div class="summary-section">
+            <h3 class="section-header">{{#if (eq language "en")}}Profile{{else}}专业概述{{/if}}</h3>
+            <div class="summary-text">{{{个人信息.专业概述}}}</div>
+          </div>
+        {{/if}}
+
+        <!-- 核心技能 -->
+        <div class="skills-sidebar">
+          <h3 class="section-header">{{#if (eq language "en")}}Skills{{else}}核心技能{{/if}}</h3>
+          <div class="skill-category">
+            <h4>{{#if (eq language "en")}}Backend{{else}}后端技术{{/if}}</h4>
+            <div class="skill-tags">
+              <span class="skill-tag">Java</span>
+              <span class="skill-tag">Spring Boot</span>
+              <span class="skill-tag">Spring Cloud</span>
+              <span class="skill-tag">MySQL</span>
+              <span class="skill-tag">Redis</span>
+            </div>
+          </div>
+          <div class="skill-category">
+            <h4>{{#if (eq language "en")}}Architecture{{else}}架构设计{{/if}}</h4>
+            <div class="skill-tags">
+              <span class="skill-tag">微服务</span>
+              <span class="skill-tag">分布式</span>
+              <span class="skill-tag">高并发</span>
+              <span class="skill-tag">DDD</span>
+            </div>
+          </div>
+          <div class="skill-category">
+            <h4>{{#if (eq language "en")}}DevOps{{else}}运维部署{{/if}}</h4>
+            <div class="skill-tags">
+              <span class="skill-tag">Docker</span>
+              <span class="skill-tag">Kubernetes</span>
+              <span class="skill-tag">Jenkins</span>
+              <span class="skill-tag">AWS</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 右侧主内容 -->
+      <main class="main-content">
+        {{#if 工作经历}}
+          <section class="content-section">
+            <h2 class="main-section-title">{{#if (eq language "en")}}Work Experience{{else}}工作经历{{/if}}</h2>
+            <div class="timeline">
+              {{#each 工作经历}}
+                <div class="timeline-item">
+                  <div class="timeline-header">
+                    <div>
+                      <div class="timeline-title">{{职位}}</div>
+                      <div class="timeline-subtitle">{{公司}}</div>
+                      {{#if 行业}}
+                        <div class="timeline-meta">{{行业}}</div>
+                      {{/if}}
+                    </div>
+                    <div class="timeline-badges">
+                      {{#if 薪资}}
+                        <span class="salary-badge">{{薪资}}</span>
+                      {{/if}}
+                      <span class="time-badge">{{时间}}</span>
+                    </div>
+                  </div>
+                  {{#if 描述}}
+                    <div class="timeline-description">{{{描述}}}</div>
+                  {{/if}}
+                </div>
+              {{/each}}
+            </div>
+          </section>
+        {{/if}}
+
+        {{#if 项目经历}}
+          <section class="content-section">
+            <h2 class="main-section-title">{{#if (eq language "en")}}Project Experience{{else}}项目经历{{/if}}</h2>
+            <div class="timeline">
+              {{#each 项目经历}}
+                <div class="timeline-item">
+                  <div class="timeline-header">
+                    <div>
+                      <div class="timeline-title">{{项目名称}}</div>
+                      {{#if 角色}}
+                        <div class="timeline-subtitle">{{角色}}</div>
+                      {{/if}}
+                    </div>
+                    {{#if 时间}}
+                      <span class="time-badge">{{时间}}</span>
+                    {{/if}}
+                  </div>
+                  {{#if 描述}}
+                    <div class="timeline-description">{{{描述}}}</div>
+                  {{/if}}
+                </div>
+              {{/each}}
+            </div>
+          </section>
+        {{/if}}
+
+        {{#if 相关技能}}
+          <section class="content-section">
+            <h2 class="main-section-title">{{#if (eq language "en")}}Professional Skills{{else}}专业技能{{/if}}</h2>
+            <div class="skills-grid">
+              <div class="skills-content">
+                {{{相关技能}}}
+              </div>
+            </div>
+          </section>
+        {{/if}}
+
+        {{#if Skills}}
+          <section class="content-section">
+            <h2 class="main-section-title">{{#if (eq language "en")}}Professional Skills{{else}}专业技能{{/if}}</h2>
+            <div class="skills-grid">
+              <div class="skills-content">
+                {{{Skills}}}
+              </div>
+            </div>
+          </section>
+        {{/if}}
+
+        {{#if 开源社区}}
+          <section class="content-section">
+            <h2 class="main-section-title">{{#if (eq language "en")}}Open Source{{else}}开源社区{{/if}}</h2>
+            <div class="timeline">
+              {{#each 开源社区}}
+                <div class="timeline-item">
+                  <div class="timeline-header">
+                    <div>
+                      <div class="timeline-title">{{名称}}</div>
+                      {{#if 地址}}
+                        <div class="project-links">
+                          <a href="{{地址}}" target="_blank" class="project-link">
+                            🔗 {{地址}}
+                          </a>
+                        </div>
+                      {{/if}}
+                    </div>
+                  </div>
+                  {{#if 描述}}
+                    <div class="timeline-description">{{{描述}}}</div>
+                  {{/if}}
+                </div>
+              {{/each}}
+            </div>
+          </section>
+        {{/if}}
+
+        {{#if 教育经历}}
+          <section class="content-section">
+            <h2 class="main-section-title">{{#if (eq language "en")}}Education{{else}}教育经历{{/if}}</h2>
+            <div class="timeline">
+              {{#each 教育经历}}
+                <div class="timeline-item">
+                  <div class="timeline-header">
+                    <div>
+                      <div class="timeline-title">{{学历}} - {{专业}}</div>
+                      <div class="timeline-subtitle">{{学校}}</div>
+                    </div>
+                    {{#if 时间}}
+                      <span class="time-badge">{{时间}}</span>
+                    {{/if}}
+                  </div>
+                  {{#if 描述}}
+                    <div class="timeline-description">{{{描述}}}</div>
+                  {{/if}}
+                </div>
+              {{/each}}
+            </div>
+          </section>
+        {{/if}}
+      </main>
+    </div>
+  </body>
+</html>
