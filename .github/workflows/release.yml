@@ -31,11 +31,11 @@ jobs:
     - name: Compile TypeScript
       run: npm run compile
 
-    - name: Test build functionality
-      run: npm run test
-
     - name: Build executables
       run: npm run build:exe
+
+    - name: Test build functionality
+      run: npm run test
 
     - name: Package sample files and templates
       run: |
