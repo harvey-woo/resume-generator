@@ -25,16 +25,51 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
+    - name: Type check
+      run: npm run type-check
+
+    - name: Compile TypeScript
+      run: npm run compile
+
+    - name: Test build functionality
+      run: npm run test
+
     - name: Build executables
       run: npm run build:exe
 
     - name: Package sample files and templates
       run: |
-        # 创建示例包
+        # 创建示例包（只包含外部文件）
         mkdir -p release-package
-        cp -r src release-package/
+        cp -r input release-package/
         cp -r template release-package/
+        mkdir -p release-package/output  # 创建空的输出目录
         cp README.md release-package/ || echo "README.md not found, skipping"
+        
+        # 创建使用说明
+        cat > release-package/使用说明.md << 'EOF'
+        # 简历生成器使用说明
+        
+        ## 目录结构
+        - `input/` - 简历 YAML 文件目录（编辑您的简历数据）
+        - `template/` - Handlebars 模板目录
+        - `output/` - 生成的 HTML 和 PDF 文件输出目录
+        
+        ## 使用方法
+        1. 将此目录下的所有文件和文件夹放在可执行文件同级目录
+        2. 编辑 `input/` 目录中的 YAML 文件
+        3. 运行可执行文件，选择相应功能生成简历
+        4. 生成的文件将保存在 `output/` 目录中
+        
+        ## 目录布局示例
+        ```
+        resume-generator-win.exe  # 可执行文件
+        input/                    # 此文件夹来自解压包
+        template/                 # 此文件夹来自解压包  
+        output/                   # 此文件夹来自解压包（生成文件的输出位置）
+        README.md                 # 此文件来自解压包
+        ```
+        EOF
         
         # 创建压缩包
         cd release-package
@@ -67,13 +102,31 @@ jobs:
           - **Linux**: resume-generator-linux
           
           ### 📄 示例文件和模板
-          - **sample-files-and-templates.zip**: 包含示例YAML文件和Handlebars模板
+          - **sample-files-and-templates.zip**: 包含示例YAML文件、模板和使用说明
           
           ### 🚀 使用方法
           1. 下载对应平台的可执行文件
-          2. 下载示例文件包并解压
-          3. 参考示例文件编辑您的简历YAML
-          4. 运行可执行文件生成简历
+          2. 下载示例文件包并解压到可执行文件同级目录
+          3. 参考 input/ 目录中的示例文件编辑您的简历YAML
+          4. 运行可执行文件，选择相应功能生成简历
+          
+          ### 📁 目录结构说明
+          
+          **可执行文件内部（pkg打包）：**
+          - 编译后的 JavaScript 代码（dist/ 目录内容）
+          - Node.js 运行时环境
+          
+          **外部文件（用户下载的zip包）：**
+          - `input/` - 简历 YAML 数据文件
+          - `template/` - Handlebars 模板文件
+          - `output/` - 生成文件的输出目录
+          - `README.md` - 项目说明文档
+          
+          ### 📋 版本更新
+          - 统一使用 TypeScript 开发
+          - 所有脚本都编译为 JavaScript 再执行
+          - 优化打包策略：编译代码内置，用户文件外置
+          - 优化项目结构，源码在 `src/` 目录
           
           自动构建于 GitHub Actions
         files: |

@@ -271,11 +271,11 @@ function ensureOutputDir(outputDir: string): void {
   }
 }
 
-// 主函数
-async function main(): Promise<void> {
+// 主要生成函数，可被外部调用
+export async function generateResume(): Promise<void> {
   try {
-    const srcDir = path.join(process.cwd(), "src");
-    const outputDir = path.join(process.cwd(), "dist");
+    const srcDir = path.join(process.cwd(), "input");
+    const outputDir = path.join(process.cwd(), "output");
 
     // 确保输出目录存在
     ensureOutputDir(outputDir);
@@ -339,9 +339,19 @@ async function main(): Promise<void> {
     console.log("\n🎉 所有文件生成完成!");
   } catch (error) {
     console.error("生成过程中出错:", error);
-    process.exit(1);
+    throw error;
   }
 }
 
-// 运行主函数
-main();
+// 主函数，用于直接运行
+async function main(): Promise<void> {
+  await generateResume();
+}
+
+// 如果直接运行此文件，执行主函数
+if (require.main === module) {
+  main().catch((error) => {
+    console.error("生成过程中出错:", error);
+    process.exit(1);
+  });
+}

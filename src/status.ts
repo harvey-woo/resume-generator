@@ -1,17 +1,16 @@
 import fs from "fs";
 import path from "path";
 
-function showProjectStatus(): void {
+export function showStatus(): void {
   console.log("📋 简历生成器项目状态 (TypeScript版本)\n");
+  const outputDir = path.join(process.cwd(), "output");
 
-  const distDir = path.join(__dirname, "dist");
-
-  if (!fs.existsSync(distDir)) {
-    console.log("❌ dist目录不存在");
+  if (!fs.existsSync(outputDir)) {
+    console.log("❌ output目录不存在");
     return;
   }
 
-  const files = fs.readdirSync(distDir);
+  const files = fs.readdirSync(outputDir);
   const htmlFiles = files.filter((f) => f.endsWith(".html"));
   const pdfFiles = files.filter((f) => f.endsWith(".pdf"));
 
@@ -31,4 +30,7 @@ function showProjectStatus(): void {
   console.log("   tsx status.ts      - 显示此状态");
 }
 
-showProjectStatus();
+// 如果直接运行此文件，显示状态
+if (require.main === module) {
+  showStatus();
+}

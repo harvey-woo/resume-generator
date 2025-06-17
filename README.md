@@ -21,23 +21,27 @@
 ├── 📄 tsconfig.json             # TypeScript 配置
 ├── 📄 README.md                 # 项目文档
 ├── 🖥️ resume-generator-*.exe    # 可执行文件 (Windows/macOS/Linux)
-├── 📁 scripts/                  # 核心脚本目录
-│   ├── 📄 generator.ts          # HTML 生成器 (TypeScript)
-│   ├── 📄 pdf-generator.ts      # PDF 生成器 (TypeScript)
+├── 📁 src/                      # TypeScript 源代码
+│   ├── 📁 bin/                  # CLI 脚本
+│   │   ├── 📄 generator-cli.ts  # 交互式 CLI 工具
+│   │   └── 📄 test-exe.ts       # 可执行文件测试
+│   ├── 📄 generator.ts          # HTML 生成器
+│   ├── 📄 pdf-generator.ts      # PDF 生成器
 │   ├── 📄 clean-pdf.ts          # PDF 清理工具
-│   ├── 📄 generator-cli.js      # 交互式 CLI 工具
-│   ├── 📄 status.ts             # 项目状态检查
-│   └── 📄 test-exe.js           # 可执行文件测试
-├── 📁 src/                      # 简历数据源
+│   └── 📄 status.ts             # 项目状态检查
+├── 📁 input/                    # 简历数据源
 │   └── 📄 zhangwei-zh.yml       # YAML 格式简历数据
 ├── 📁 template/                 # 模板文件
 │   ├── 📄 resume.hbs            # 主简历模板
 │   └── 📄 resume-fresh.hbs      # 清新风格模板
-├── 📁 build/                    # 构建输出目录
-│   └── 🖥️ resume-generator-*    # 各平台可执行文件
-└── 📁 dist/                     # 生成的简历文件
-    ├── 📄 *.html                # HTML 格式简历
-    └── 📄 *.pdf                 # PDF 格式简历
+├── 📁 output/                   # 生成的简历文件
+│   ├── 📄 *.html                # HTML 格式简历
+│   └── 📄 *.pdf                 # PDF 格式简历
+├── 📁 dist/                     # TypeScript 编译输出
+│   ├── 📁 bin/                  # 编译后的 CLI 脚本
+│   └── 📄 *.js                  # 编译后的 JavaScript 文件
+└── 📁 build/                    # 打包构建目录
+    └── 🖥️ resume-generator-*    # 各平台可执行文件
 ```
 
 ## 🚀 快速开始
@@ -48,481 +52,291 @@
 
 **Windows 用户：**
 ```powershell
-# 双击运行或命令行执行
+# 下载可执行文件
+curl -L -o resume-generator-win.exe https://github.com/your-username/self-resume/releases/latest/download/resume-generator-win.exe
+
+# 下载示例文件包
+curl -L -o sample-files-and-templates.zip https://github.com/your-username/self-resume/releases/latest/download/sample-files-and-templates.zip
+
+# 解压示例文件
+Expand-Archive sample-files-and-templates.zip -DestinationPath .
+
+# 运行程序
 .\resume-generator-win.exe
 ```
 
-**macOS 用户：**
+**macOS/Linux 用户：**
 ```bash
-# 添加执行权限并运行
+# macOS
+curl -L -o resume-generator-macos https://github.com/your-username/self-resume/releases/latest/download/resume-generator-macos
 chmod +x resume-generator-macos
-./resume-generator-macos
-```
 
-**Linux 用户：**
-```bash
-# 添加执行权限并运行
+# Linux
+curl -L -o resume-generator-linux https://github.com/your-username/self-resume/releases/latest/download/resume-generator-linux
 chmod +x resume-generator-linux
+
+# 下载示例文件包
+curl -L -o sample-files-and-templates.zip https://github.com/your-username/self-resume/releases/latest/download/sample-files-and-templates.zip
+unzip sample-files-and-templates.zip
+
+# 运行程序 (macOS)
+./resume-generator-macos
+
+# 运行程序 (Linux)
 ./resume-generator-linux
 ```
 
-### 方式二：开发环境运行
+### 方式二：从源码构建
 
-如果你需要修改源码或进行开发：
+**环境要求：**
+- Node.js 18 或更高版本
+- npm 或 yarn
 
-**1. 安装依赖**
+**安装和使用：**
+
 ```bash
+# 克隆项目
+git clone https://github.com/your-username/self-resume.git
+cd self-resume
+
+# 安装依赖
 npm install
-# 或使用 yarn
-yarn install
-```
 
-**2. 运行交互式命令行**
-```bash
+# 编译 TypeScript
+npm run compile
+
+# 开发模式 - 快速生成
+npm run dev
+
+# 完整构建流程
+npm run build
+
+# 运行交互式 CLI
 npm run cli
-# 或直接运行
-node scripts/generator-cli.js
+
+# 查看项目状态
+npm run status
+
+# 运行测试
+npm run test
+
+# 生成可执行文件
+npm run package
 ```
 
-## 📋 使用方法
+## 📝 使用指南
 
-### 命令行操作
+### 1. 编辑简历数据
 
-运行可执行文件或 CLI 工具后，会看到交互式菜单：
-
-```
-============================================================
-              📄 简历生成器 v1.0.0
-============================================================
-
-请选择操作:
-
-1. 生成HTML文件
-2. 生成PDF文件  
-3. 生成所有文件 (HTML + PDF)
-4. 清理PDF文件
-5. 查看项目状态
-0. 退出程序
-```
-
-### NPM 脚本命令
-
-| 命令 | 功能 | 描述 |
-|------|------|------|
-| `npm run build` | 🔥 **完整构建** | 生成 HTML 和 PDF 文件 |
-| `npm run build:html` | 🌐 **HTML 生成** | 仅生成 HTML 格式简历 |
-| `npm run build:pdf` | 📄 **PDF 生成** | 仅生成 PDF 格式简历 |
-| `npm run clean` | 🧹 **清理文件** | 删除生成的 PDF 文件 |
-| `npm run dev` | 🔧 **开发模式** | 开发时快速生成 HTML |
-| `npm run type-check` | ✅ **类型检查** | TypeScript 类型验证 |
-
-### 可执行文件构建
-
-如果需要重新构建可执行文件：
-
-```bash
-# 构建所有平台的可执行文件
-npm run build:exe
-
-# 构建特定平台
-npm run build:exe:win     # Windows
-npm run build:exe:mac     # macOS  
-npm run build:exe:linux   # Linux
-
-# 清理可执行文件
-npm run clean:exe
-```
-
-## 📝 数据配置
-
-### YAML 文件结构
-
-在 `src/` 目录下创建或编辑 YAML 文件，支持以下数据结构：
+在 `input/` 目录中创建或编辑 YAML 文件：
 
 ```yaml
-# 模板配置
-模板配置:
-  模板路径: "template/resume.hbs"
-  语言: "zh-CN"  # 或 "en"
+# input/your-resume.yml
 
-# 个人信息
+模板配置:
+  模板路径: "template/resume-fresh.hbs"
+  语言: "zh-CN"
+
 个人信息:
-  姓名: "张伟"
-  专业概述: "资深全栈工程师"
-  
-# 基本信息  
+  姓名: 张三
+  照片: "input/photo.jpg"  # 可选
+  专业概述: "**5年**专注前端开发，精通 React、Vue 等现代框架"
+
 基本信息:
-  手机: "138-0000-0000"
-  邮箱: "zhangwei@example.com"
-  
-# 工作经历
+  电话: "+86138xxxxxxxx"
+  邮箱: zhangsan@example.com
+  性别: 男
+  年龄: 28岁
+  意向岗位: 前端开发工程师
+  意向城市: 上海
+  期望月薪: 25K
+
 工作经历:
-  - 公司: "某科技有限公司"
-    职位: "高级工程师"
-    时间: "2020.03 - 至今"
-    描述: "负责核心产品开发和架构设计"
-    
-# 项目经历
-项目经历:
-  - 名称: "企业级管理系统"
-    技术栈: "React, Node.js, MongoDB"
-    描述: "**负责前端架构设计**，实现了高性能的用户界面"
-    
-# 相关技能
-相关技能:
-  - 分类: "前端技术"
-    技能: "React, Vue.js, TypeScript, **精通现代前端框架**"
-    
-# 教育经历
-教育经历:
-  - 学校: "某某大学"
-    专业: "计算机科学与技术"
-    学历: "本科"
-    时间: "2016-2020"
+  - 公司: 某科技有限公司
+    职位: 高级前端开发工程师
+    时间: 2020年3月 - 至今
+    地点: 上海
+    描述: |
+      - 负责公司核心产品的前端架构设计和开发
+      - 使用 React + TypeScript 构建现代化 Web 应用
+      - 优化页面性能，提升用户体验
+
+技能列表:
+  前端技术: "React - Vue.js - TypeScript - JavaScript - HTML5 - CSS3"
+  后端技术: "Node.js - Express - MongoDB"
+  开发工具: "Git - Webpack - Vite - Docker"
 ```
 
-### Markdown 支持
+### 2. 自定义模板
 
-简历内容支持 Markdown 格式：
-
-- `**文本**` → **加粗显示**
-- 自动换行处理
-- 特殊字符转义
-
-> ⚠️ **注意**：包含 `**` 等特殊字符的文本需要用引号包裹
-
-## 🎨 模板系统### 可用模板
-
-| 模板文件 | 风格特点 | 适用场景 |
-|----------|----------|----------|
-| `resume.hbs` | 🎯 **经典商务** | 传统行业、正式场合 |
-| `resume-fresh.hbs` | 🌟 **清新现代** | 互联网、创意行业 |
-
-### 模板自定义
-
-模板使用 **Handlebars** 语法，支持以下功能：
+模板使用 Handlebars 语法，支持以下功能：
 
 ```handlebars
-<!-- 基本变量输出 -->
-<h1>{{个人信息.姓名}}</h1>
-
-<!-- 循环渲染 -->
-{{#each 工作经历}}
-<div class="job">
-  <h3>{{公司}} - {{职位}}</h3>
-  <p>{{{markdown 描述}}}</p>
-</div>
-{{/each}}
-
-<!-- Markdown 渲染 -->
-{{{markdown 相关技能.技能}}}
-
-<!-- 条件判断 -->
-{{#if 基本信息.照片}}
-<img src="{{基本信息.照片}}" alt="照片">
-{{/if}}
+<!-- template/my-template.hbs -->
+<!DOCTYPE html>
+<html lang="{{language}}">
+<head>
+    <meta charset="UTF-8">
+    <title>{{个人信息.姓名}} - 个人简历</title>
+</head>
+<body>
+    <h1>{{个人信息.姓名}}</h1>
+    
+    <!-- 支持 Markdown 渲染 -->
+    <div class="summary">
+        {{{markdown 个人信息.专业概述}}}
+    </div>
+    
+    <!-- 条件判断 -->
+    {{#if 个人信息.照片}}
+    <img src="{{个人信息.照片}}" alt="个人照片">
+    {{/if}}
+    
+    <!-- 循环渲染 -->
+    {{#each 工作经历}}
+    <div class="work-item">
+        <h3>{{公司}} - {{职位}}</h3>
+        <p>{{时间}} | {{地点}}</p>
+        <div>{{{markdown 描述}}}</div>
+    </div>
+    {{/each}}
+</body>
+</html>
 ```
 
-### 多语言配置
+### 3. 运行生成
 
-统一模板支持中英文自动切换：
-
-```yaml
-模板配置:
-  模板路径: "template/resume.hbs"
-  语言: "zh-CN"  # 中文界面
-  # 或
-  语言: "en"     # 英文界面
+**交互式 CLI（推荐）：**
+```bash
+npm run cli
 ```
 
-**语言对照表：**
+**命令行直接运行：**
+```bash
+# 生成 HTML
+npm run build:html
 
-| 中文 | 英文 |
-|------|------|
-| 工作经历 | Work Experience |
-| 项目经历 | Project Experience |
-| 相关技能 | Professional Skills |
-| 教育经历 | Education |
-| 基本信息 | Personal Info |
+# 生成 PDF
+npm run build:pdf
 
-## ⚙️ 高级配置
+# 生成所有格式
+npm run build
 
-### PDF 自定义设置
-
-编辑 `scripts/pdf-generator.ts` 中的 PDF 选项：
-
-```typescript
-const pdfOptions = {
-  format: "A4" as const,
-  printBackground: true,
-  margin: {
-    top: "0.5in",
-    right: "0.5in", 
-    bottom: "0.5in",
-    left: "0.5in",
-  },
-  // 自定义页眉页脚
-  displayHeaderFooter: false,
-  // DPI 设置
-  preferCSSPageSize: true,
-};
+# 清理 PDF 文件
+npm run clean
 ```
 
-### 批量处理
-
-工具自动扫描 `src/` 目录下的所有 `.yml` 文件，支持：
-
-- ✅ 同时处理多个简历文件
-- ✅ 自动生成对应的 HTML/PDF
-- ✅ 保持文件名一致性
-
-### 开发环境配置
-
-**TypeScript 配置** (`tsconfig.json`)：
-```json
-{
-  "compilerOptions": {
-    "target": "ES2020",
-    "module": "CommonJS", 
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "strict": true
-  }
-}
+**使用编译后的脚本：**
+```bash
+# 直接运行编译后的 JavaScript
+node dist/generator.js
+node dist/pdf-generator.js
+node dist/status.js
 ```
-
-**依赖说明：**
-- `handlebars`: 模板引擎
-- `js-yaml`: YAML 解析
-- `marked`: Markdown 渲染
-- `puppeteer`: PDF 生成
-- `tsx`: TypeScript 运行时
 
 ## 🛠️ 开发指南
 
-### 项目架构
+### 项目脚本
 
+| 命令 | 描述 |
+|------|------|
+| `npm run compile` | 编译 TypeScript 为 JavaScript |
+| `npm run type-check` | 类型检查 |
+| `npm run dev` | 开发模式运行 |
+| `npm run dev:watch` | 监听模式运行 |
+| `npm run build` | 完整构建 |
+| `npm run cli` | 交互式 CLI |
+| `npm run status` | 查看项目状态 |
+| `npm run test` | 运行测试 |
+| `npm run package` | 打包为可执行文件 |
+
+### 代码结构
+
+- **`src/`** - TypeScript 源代码
+  - **`bin/`** - CLI 相关脚本
+  - **`generator.ts`** - HTML 生成核心逻辑
+  - **`pdf-generator.ts`** - PDF 生成逻辑
+  - **`clean-pdf.ts`** - 文件清理工具
+  - **`status.ts`** - 状态查看工具
+
+- **`input/`** - 简历数据文件
+- **`template/`** - Handlebars 模板
+- **`output/`** - 生成的输出文件
+- **`dist/`** - TypeScript 编译输出
+
+### 开发工作流
+
+1. **编辑源码** - 修改 `src/` 目录下的 TypeScript 文件
+2. **编译** - 运行 `npm run compile` 编译为 JavaScript
+3. **测试** - 运行 `npm run test` 验证功能
+4. **构建** - 运行 `npm run build` 生成简历
+5. **打包** - 运行 `npm run package` 生成可执行文件
+
+## 🎨 模板开发
+
+### 内置助手函数
+
+```handlebars
+<!-- Markdown 渲染 -->
+{{{markdown text}}}
+
+<!-- 条件判断 -->
+{{#eq value1 value2}}相等{{/eq}}
+
+<!-- 语言检测 -->
+{{#eq language "zh-CN"}}中文内容{{/eq}}
+{{#eq language "en-US"}}English Content{{/eq}}
 ```
-📁 scripts/
-├── 📄 generator.ts       # 核心生成器，处理 YAML → HTML
-├── 📄 pdf-generator.ts   # PDF 转换器，HTML → PDF
-├── 📄 clean-pdf.ts       # 文件清理工具
-├── 📄 generator-cli.js   # 交互式命令行界面
-├── 📄 status.ts          # 项目状态检查和诊断
-└── 📄 test-exe.js        # 可执行文件功能测试
-```
 
-### TypeScript 特性
+### 样式指南
 
-- 🔒 **严格类型检查**：确保数据结构正确性
-- 🚀 **现代 ES 特性**：支持 async/await、解构等
-- 📝 **智能提示**：完整的类型定义和 IntelliSense
-- 🔧 **热重载开发**：使用 `tsx` 无需编译即可运行
+项目提供现代化 CSS 样式，支持：
+- 响应式设计
+- 暗色模式兼容
+- 打印友好样式
+- 渐变色彩方案
 
-### 扩展开发
+## 📦 打包部署
 
-**添加新模板：**
-1. 在 `template/` 目录创建 `.hbs` 文件
-2. 在 YAML 中指定 `模板路径`
-3. 使用现有的 Handlebars 助手函数
-
-**添加新功能：**
-1. 修改对应的 TypeScript 文件
-2. 运行 `npm run type-check` 验证类型
-3. 使用 `npm run dev` 测试功能
-
-## 🏗️ 构建与部署
-
-### 可执行文件构建
-
-使用 **pkg** 工具将项目打包为独立可执行文件：
+### 生成可执行文件
 
 ```bash
-# 构建所有平台（Windows + macOS + Linux）
-npm run build:exe
+# 生成所有平台
+npm run package
 
-# 分平台构建
-npm run build:exe:win     # Windows x64
-npm run build:exe:mac     # macOS x64  
-npm run build:exe:linux   # Linux x64
+# 单独平台
+npm run build:exe:win    # Windows
+npm run build:exe:mac    # macOS  
+npm run build:exe:linux  # Linux
 ```
 
-**构建输出：**
-- `resume-generator-win.exe` - Windows 可执行文件
-- `resume-generator-macos` - macOS 可执行文件
-- `resume-generator-linux` - Linux 可执行文件
+### CI/CD
 
-### 项目分发
-
-可执行文件包含以下资源：
-- ✅ 完整的 Node.js 运行时
-- ✅ 所有依赖包（Puppeteer、Handlebars 等）
-- ✅ 模板文件和示例数据
-- ✅ 交互式命令行界面
-
-用户无需安装任何环境即可直接运行。
-
-## 📊 输出文件
-
-生成的简历保存在 `dist/` 目录：
-
-| 文件类型 | 特点 | 用途 |
-|----------|------|------|
-| 📄 **HTML** | 响应式设计、在线预览 | 网页展示、在线投递 |
-| 📄 **PDF** | 高质量打印、标准格式 | 邮件附件、打印简历 |
-
-**文件命名规则：**
-- 源文件：`src/zhangwei-zh.yml`
-- 输出：`dist/zhangwei-zh.html` + `dist/zhangwei-zh.pdf`
-
-## 🔧 系统要求
-
-### 可执行文件模式
-- ✅ **无需安装**：开箱即用，自带运行环境
-- ✅ **跨平台**：支持 Windows、macOS、Linux
-- ✅ **轻量化**：单文件包含所有依赖
-
-### 开发环境模式
-- 📦 **Node.js** v16+ (推荐 v18+)
-- 🌐 **Chrome/Chromium** (Puppeteer PDF 生成依赖)
-- 💾 **可用磁盘空间** 50MB+
-- 🔧 **npm/yarn** 包管理器
-
-## ❗ 故障排除
-
-### 常见问题及解决方案
-
-| 问题 | 原因 | 解决方案 |
-|------|------|----------|
-| 🚫 **依赖安装失败** | 网络问题或权限不足 | 删除 `node_modules` 重新安装 |
-| 🚫 **Puppeteer 下载失败** | 网络限制或镜像问题 | 使用国内镜像或 cnpm |
-| 🚫 **PDF 生成失败** | Chrome 环境缺失 | 检查 Puppeteer 安装状态 |
-| 🚫 **模板渲染错误** | YAML 格式问题 | 检查文件编码和语法 |
-| 🚫 **可执行文件无法运行** | 权限或系统兼容性 | 添加执行权限或检查系统版本 |
-
-### 详细解决步骤
-
-**1. 依赖问题**
-```powershell
-# Windows PowerShell
-Remove-Item -Recurse -Force node_modules
-Remove-Item package-lock.json -ErrorAction SilentlyContinue
-npm install
-```
-
-```bash
-# macOS/Linux
-rm -rf node_modules package-lock.json
-npm install
-```
-
-**2. Puppeteer 安装问题**
-
-```bash
-# 方案 1：使用国内镜像
-npm config set puppeteer_download_host=https://cdn.npmmirror.com
-npm install puppeteer
-
-# 方案 2：使用 cnpm
-npm install -g cnpm
-cnpm install puppeteer
-
-# 方案 3：手动设置代理
-npm config set proxy http://your-proxy:port
-npm install puppeteer
-```
-
-**3. PDF 生成失败**
-```bash
-# 检查 Puppeteer 状态
-node -e "console.log(require('puppeteer').executablePath())"
-
-# 如果报错，重新安装 Puppeteer
-npm uninstall puppeteer
-npm install puppeteer
-```
-
-**4. 文件编码问题**
-- ✅ 确保 YAML 文件使用 **UTF-8** 编码
-- ✅ 特殊字符用引号包裹：`"包含**加粗**的文本"`
-- ✅ 检查 YAML 语法：使用在线 YAML 验证器
-
-**5. 权限问题 (macOS/Linux)**
-```bash
-# 添加执行权限
-chmod +x resume-generator-macos
-chmod +x resume-generator-linux
-
-# 如果提示安全警告 (macOS)
-xattr -d com.apple.quarantine resume-generator-macos
-```
-
-### 调试模式
-
-开启详细日志输出：
-
-```bash
-# 设置调试环境变量
-export DEBUG=1
-npm run build
-
-# Windows
-set DEBUG=1 && npm run build
-```
+项目包含 GitHub Actions 工作流，支持：
+- 自动类型检查
+- 自动编译构建
+- 自动测试验证
+- 自动发布可执行文件
+- 自动打包示例文件
 
 ## 🤝 贡献指南
 
-欢迎提交 Issue 和 Pull Request！
-
-### 开发流程
-1. 🍴 Fork 此仓库
-2. 🌿 创建功能分支：`git checkout -b feature/new-feature`
-3. 💻 编写代码并测试
-4. 📝 更新文档
-5. 🚀 提交 PR
-
-### 代码规范
-- ✅ 使用 TypeScript 严格模式
-- ✅ 遵循 ESLint 配置
-- ✅ 添加必要的类型注释
-- ✅ 编写测试用例
+1. Fork 项目
+2. 创建功能分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 创建 Pull Request
 
 ## 📄 许可证
 
-MIT License - 详见 [LICENSE](LICENSE) 文件
+本项目基于 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情
+
+## 🔗 相关链接
+
+- [项目主页](https://github.com/your-username/self-resume)
+- [问题反馈](https://github.com/your-username/self-resume/issues)
+- [功能请求](https://github.com/your-username/self-resume/discussions)
 
 ---
 
-## 🌟 Star History
-
-如果这个项目对您有帮助，请给个 ⭐ Star 支持一下！
-
-**由 ❤️ 和 TypeScript 驱动**
-
-## 🔄 自动发布
-
-项目配置了GitHub Actions自动发布流程：
-
-### 发布新版本
-
-1. **创建并推送标签**:
-   ```bash
-   git tag v1.0.0
-   git push origin v1.0.0
-   ```
-
-2. **GitHub Actions会自动**:
-   - 构建跨平台可执行文件 (Windows, macOS, Linux)
-   - 打包示例文件和模板
-   - 创建GitHub Release
-   - 上传所有文件供用户下载
-
-### 下载发布版本
-
-用户可以从GitHub Releases页面下载：
-- **可执行文件**: 选择对应平台的文件
-  - `resume-generator-win.exe` (Windows)
-  - `resume-generator-macos` (macOS)  
-  - `resume-generator-linux` (Linux)
-- **示例文件包**: `sample-files-and-templates.zip`
-  - 包含示例YAML文件和Handlebars模板
+⭐ 如果这个项目对你有帮助，请给它一个星标！

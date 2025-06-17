@@ -55,33 +55,31 @@ async function generatePDF(
   }
 }
 
-// 主函数
-async function main(): Promise<void> {
+// 主要PDF生成函数，可被外部调用
+export async function generateResumePDF(): Promise<void> {
   try {
-    const distDir = path.join(process.cwd(), "dist");
+    const outputDir = path.join(process.cwd(), "output");
 
-    // 检查dist目录是否存在
-    if (!fs.existsSync(distDir)) {
-      console.error("dist目录不存在，请先运行 'npm run build' 生成HTML文件");
-      process.exit(1);
+    // 检查output目录是否存在
+    if (!fs.existsSync(outputDir)) {
+      throw new Error("output目录不存在，请先生成HTML文件");
     }
 
     // 查找所有HTML文件
-    const files = fs.readdirSync(distDir);
+    const files = fs.readdirSync(outputDir);
     const htmlFiles = files.filter((file) => file.endsWith(".html"));
 
     if (htmlFiles.length === 0) {
-      console.error("dist目录中没有找到HTML文件，请先运行 'npm run build'");
-      process.exit(1);
+      throw new Error("output目录中没有找到HTML文件，请先生成HTML文件");
     }
 
     console.log(`找到 ${htmlFiles.length} 个HTML文件，开始生成PDF...`);
 
     // 为每个HTML文件生成PDF
     for (const htmlFile of htmlFiles) {
-      const htmlPath = path.join(distDir, htmlFile);
+      const htmlPath = path.join(outputDir, htmlFile);
       const pdfFile = htmlFile.replace(".html", ".pdf");
-      const pdfPath = path.join(distDir, pdfFile);
+      const pdfPath = path.join(outputDir, pdfFile);
 
       await generatePDF(htmlPath, pdfPath);
     }
@@ -89,9 +87,19 @@ async function main(): Promise<void> {
     console.log("所有PDF文件生成完成!");
   } catch (error) {
     console.error("生成PDF时出错:", error);
-    process.exit(1);
+    throw error;
   }
 }
 
-// 运行脚本
-main();
+// 主函数，用于直接运行
+async function main(): Promise<void> {
+  await generateResumePDF();
+}
+
+// 如果直接运行此文件，执行主函数
+if (require.main === module) {
+  main().catch((error) => {
+    console.error("生成PDF时出错:", error);
+    process.exit(1);
+  });
+}

@@ -41,14 +41,13 @@ function checkProjectStructure() {
   
   // 检测是否在打包后的环境中运行（通过检查是否存在package.json来判断）
   const isPackaged = !fs.existsSync(path.join(currentDir, "package.json"));
-  
-  let requiredPaths;
+    let requiredPaths;
   if (isPackaged) {
     // 打包后的环境只需要检查核心文件
-    requiredPaths = ["src", "template/resume.hbs"];
+    requiredPaths = ["input", "template/resume.hbs"];
   } else {
     // 开发环境需要检查package.json
-    requiredPaths = ["src", "template/resume.hbs", "package.json"];
+    requiredPaths = ["input", "template/resume.hbs", "package.json"];
   }
 
   console.log(colors.blue("检查项目结构..."));
@@ -56,9 +55,8 @@ function checkProjectStructure() {
   for (const pathToCheck of requiredPaths) {
     const fullPath = path.join(currentDir, pathToCheck);
     if (!fs.existsSync(fullPath)) {
-      console.log(colors.red(`❌ 缺少必要文件/目录: ${pathToCheck}`));
-      if (isPackaged) {
-        console.log(colors.yellow("请确保 src 和 template 目录在可执行文件同级目录中"));
+      console.log(colors.red(`❌ 缺少必要文件/目录: ${pathToCheck}`));      if (isPackaged) {
+        console.log(colors.yellow("请确保 input 和 template 目录在可执行文件同级目录中"));
       } else {
         console.log(colors.yellow("请确保在正确的项目目录中运行此程序"));
       }
@@ -116,9 +114,8 @@ function showProjectStatus() {
       execSync("node dist/status.js", {
         stdio: "inherit",
         cwd: process.cwd(),
-      });
-    } else if (commands.hasNpm) {
-      execSync("npx tsx scripts/status.ts", {
+      });    } else if (commands.hasNpm) {
+      execSync("npx tsx src/status.ts", {
         stdio: "inherit",
         cwd: process.cwd(),
       });
@@ -205,31 +202,27 @@ async function main() {
 
     switch (choice) {      case "1":
         if (isPackaged) {
-          runCommand("node dist/generator.js", "生成HTML文件");
-        } else {
-          runCommand("npx tsx scripts/generator.ts", "生成HTML文件");
+          runCommand("node dist/generator.js", "生成HTML文件");        } else {
+          runCommand("npx tsx src/generator.ts", "生成HTML文件");
         }
         break;      case "2":
         if (isPackaged) {
-          runCommand("node dist/pdf-generator.js", "生成PDF文件");
-        } else {
-          runCommand("npx tsx scripts/pdf-generator.ts", "生成PDF文件");
+          runCommand("node dist/pdf-generator.js", "生成PDF文件");        } else {
+          runCommand("npx tsx src/pdf-generator.ts", "生成PDF文件");
         }
         break;      case "3":
         if (isPackaged) {
           runCommand("node dist/generator.js", "生成HTML文件");
           console.log();
-          runCommand("node dist/pdf-generator.js", "生成PDF文件");
-        } else {
-          runCommand("npx tsx scripts/generator.ts", "生成HTML文件");
+          runCommand("node dist/pdf-generator.js", "生成PDF文件");        } else {
+          runCommand("npx tsx src/generator.ts", "生成HTML文件");
           console.log();
-          runCommand("npx tsx scripts/pdf-generator.ts", "生成PDF文件");
+          runCommand("npx tsx src/pdf-generator.ts", "生成PDF文件");
         }
         break;      case "4":
         if (isPackaged) {
-          runCommand("node dist/clean-pdf.js", "清理PDF文件");
-        } else {
-          runCommand("npx tsx scripts/clean-pdf.ts", "清理PDF文件");
+          runCommand("node dist/clean-pdf.js", "清理PDF文件");        } else {
+          runCommand("npx tsx src/clean-pdf.ts", "清理PDF文件");
         }
         break;
 

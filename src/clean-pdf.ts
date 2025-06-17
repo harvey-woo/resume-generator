@@ -1,16 +1,16 @@
 import fs from "fs";
 import path from "path";
 
-// 清理dist目录中的PDF文件
-function cleanPDFs(): void {
-  const distDir = path.join(__dirname, "dist");
+// 清理output目录中的PDF文件
+export function cleanPDFFiles(): void {
+  const outputDir = path.join(process.cwd(), "output");
 
-  if (!fs.existsSync(distDir)) {
-    console.log("dist目录不存在");
+  if (!fs.existsSync(outputDir)) {
+    console.log("output目录不存在");
     return;
   }
 
-  const files = fs.readdirSync(distDir);
+  const files = fs.readdirSync(outputDir);
   const pdfFiles = files.filter((file) => file.endsWith(".pdf"));
 
   if (pdfFiles.length === 0) {
@@ -22,7 +22,7 @@ function cleanPDFs(): void {
   let failedCount = 0;
 
   pdfFiles.forEach((pdfFile) => {
-    const pdfPath = path.join(distDir, pdfFile);
+    const pdfPath = path.join(outputDir, pdfFile);
     try {
       fs.unlinkSync(pdfPath);
       console.log(`✓ 删除成功: ${pdfFile}`);
@@ -42,5 +42,7 @@ function cleanPDFs(): void {
   }
 }
 
-// 运行清理
-cleanPDFs();
+// 如果直接运行此文件，执行清理
+if (require.main === module) {
+  cleanPDFFiles();
+}
